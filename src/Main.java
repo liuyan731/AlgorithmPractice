@@ -308,16 +308,16 @@ public class Main {
 
     /**
      * 将char数组中所有小写字母排在大写字母前面
-     * */
+     */
     public static char[] changeOrder(char[] chars) {
         int l = 0, r = chars.length - 1;
-        while(l < r) {
-            if(chars[l] <= 'z' && chars[l] >= 'a') {
+        while (l < r) {
+            if (chars[l] <= 'z' && chars[l] >= 'a') {
                 l++;
                 continue;
             }
 
-            if(chars[r] >= 'A' && chars[r] <= 'Z') {
+            if (chars[r] >= 'A' && chars[r] <= 'Z') {
                 r--;
                 continue;
             }
@@ -329,7 +329,37 @@ public class Main {
         return chars;
     }
 
-    public static void main(String[] args) {
+    /**
+     *
+     * */
+    public static void printQuanpailie(int[] nums, int l, int r) {
 
+        if (l > r) {
+            for (int i : nums) {
+                System.out.print(i);
+            }
+            System.out.println();
+        }
+
+        for (int i = l; i <= r; i++) {
+            swap(nums, i, l);
+            printQuanpailie(nums, l + 1, r);
+            swap(nums, i, l);
+        }
+    }
+
+    public static void swap(int[] nums, int i, int j) {
+        int tmp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tmp;
+    }
+
+    /**
+     *
+     * */
+
+    public static void main(String[] args) {
+        int[] nums = {1, 2, 3, 4};
+        printQuanpailie(nums, 0, nums.length - 1);
     }
 }
