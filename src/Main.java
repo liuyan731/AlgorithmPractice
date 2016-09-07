@@ -330,8 +330,8 @@ public class Main {
     }
 
     /**
-     *
-     * */
+     * 打印全排列
+     */
     public static void printQuanpailie(int[] nums, int l, int r) {
 
         if (l > r) {
@@ -355,11 +355,209 @@ public class Main {
     }
 
     /**
-     *
-     * */
+     * 二分查找的相关问题（important）
+     * 1、普通二分查找递归
+     * 2、普通二分查找非递归
+     * 3、找到key首次出现的位置
+     * 4、找到key最后出现的位置
+     * 5、在变型的排列数组中找到key的位置（5,6,7,8,1,2,3,4 数组前后分别有序）
+     */
+    public static int binarySearch1(int[] nums, int l, int r, int x) {
+        if (l <= r) {
+            int mid = (l + r) / 2;
+            if (nums[mid] == x) {
+                return mid;
+            } else if (nums[mid] > x) {
+                return binarySearch1(nums, l, mid - 1, x);
+            } else {
+                return binarySearch1(nums, mid + 1, r, x);
+            }
+        } else {
+            return -1;
+        }
+    }
+
+    public static int binarySearch2(int[] nums, int x) {
+        int l = 0, r = nums.length - 1, mid;
+        while (l <= r) {
+            mid = (l + r) / 2;
+            if (nums[mid] == x) {
+                return mid;
+            } else if (nums[mid] > x) {
+                r = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return -1;
+    }
+
+    public static int binarySearch3(int[] nums, int x) {
+        int l = 0, r = nums.length - 1, mid;
+        while (l <= r) {
+            mid = (l + r) / 2;
+            if (nums[mid] == x) {
+                if (mid == 0) {
+                    return mid;
+                } else if (mid >= 1 && nums[mid - 1] != x) {
+                    return mid;
+                } else {
+                    r = mid - 1;
+                }
+            } else if (nums[mid] > x) {
+                r = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return -1;
+    }
+
+    public static int binarySearch4(int[] nums, int x) {
+        int l = 0, r = nums.length - 1, mid;
+        while (l <= r) {
+            mid = (l + r) / 2;
+            if (nums[mid] == x) {
+                if (mid == nums.length - 1) {
+                    return mid;
+                } else if (mid < nums.length - 1 && nums[mid + 1] != x) {
+                    return mid;
+                } else {
+                    l = mid + 1;
+                }
+            } else if (nums[mid] > x) {
+                r = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return -1;
+    }
+
+    public static int binarySearch5(int[] nums, int x) {
+        int l = 0, r = nums.length - 1, mid;
+        while (l <= r) {
+            mid = (l + r) / 2;
+            if (nums[mid] == x) {
+                return mid;
+            } else if (nums[mid] >= nums[l]) {
+                if (nums[mid] > x && x >= nums[l]) {
+                    r = mid - 1;
+                } else {
+                    l = mid + 1;
+                }
+            } else {
+                if (nums[mid] < x && x <= nums[r]) {
+                    l = mid + 1;
+                } else {
+                    r = mid - 1;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 最长公共子串
+     */
+    public static String LCString(String s1, String s2) {
+        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+        int maxLen = 0, idx = 0;
+        for (int i = s1.length() - 1; i >= 0; i--) {
+            for (int j = s2.length() - 1; j >= 0; j--) {
+                if (s1.charAt(i) == s2.charAt(j)) {
+                    dp[i][j] = dp[i + 1][j + 1] + 1;
+                    if (dp[i][j] > maxLen) {
+                        maxLen = dp[i][j];
+                        idx = i;
+                    }
+                }
+            }
+        }
+        return s1.substring(idx, idx + maxLen);
+    }
+
+    /**
+     * 最长递增子串
+     */
+    public static void LIString(int[] s) {
+        int dp[] = new int[s.length];
+        int maxLen = 0, idx = 0;
+        for (int i = 1; i < s.length; i++) {
+            dp[i] = 1;
+            if (s[i] > s[i - 1]) {
+                dp[i] = dp[i - 1] + 1;
+                if (dp[i] > maxLen) {
+                    maxLen = dp[i];
+                    idx = i;
+                }
+            }
+        }
+        for (int i = idx - (maxLen - 1); i <= idx; i++) {
+            System.out.print(s[i] + " ");
+        }
+        System.out.println();
+        System.out.println(maxLen);
+    }
+
+    /**
+     * 最长公共子序列
+     */
+    public static String LCSequence(String s1, String s2) {
+        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+        for (int i = s1.length() - 1; i >= 0; i--) {
+            for (int j = s2.length() - 1; j >= 0; j--) {
+                if (s1.charAt(i) == s2.charAt(j)) {
+                    dp[i][j] = dp[i + 1][j + 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i][j + 1], dp[i + 1][j]);
+                }
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int i = 0, j = 0;
+        while (i < s1.length() && j < s2.length()) {
+            if (s1.charAt(i) == s2.charAt(j)) {
+                sb.append(s1.charAt(i));
+                i++;
+                j++;
+            } else if (dp[i + 1][j] > dp[i][j + 1]) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 最长递增子序列
+     */
+    public static void LISequence(int[] s) {
+        int[] dp = new int[s.length];
+        int maxLen = 0;
+        for (int i = 0; i < s.length; i++) {
+            dp[i] = 1;
+            for (int j = 0; j < j; j++) {
+                if(s[i] > s[j] && dp[i] < dp[j] + 1) {
+                    dp[i] = dp[j] + 1;
+                }
+                if(dp[i] > maxLen) {
+                    maxLen = dp[i];
+                }
+            }
+        }
+        System.out.println(maxLen);;
+    }
 
     public static void main(String[] args) {
-        int[] nums = {1, 2, 3, 4};
-        printQuanpailie(nums, 0, nums.length - 1);
+        String s1 = "abcdefg";
+        String s2 = "eafbgchd";
+        System.out.println(LCString(s1, s2));
+        System.out.println(LCSequence(s1, s2));
+        int[] nums = {5, 1, 2, 3, 8};
+        LIString(nums);
     }
+
 }
