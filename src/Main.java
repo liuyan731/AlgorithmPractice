@@ -1,6 +1,4 @@
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Created by liuyan on 16/9/4.
@@ -899,7 +897,49 @@ public class Main {
 			return isSameTree(t1.left, t2.left) && isSameTree(t1.right, t2.right);
 		}
 	}
-	
+
+    /**
+     * 判断一棵树是否左右对称的
+     * */
+    public static boolean isSymmetric(TreeNode root) {
+        return helper(root, root);
+    }
+
+    public static boolean helper(TreeNode node1, TreeNode node2) {
+        if(node1 == null && node2 == null) {
+            return node1 == node2;
+        } else if (node1.val != node2.val) {
+            return false;
+        } else {
+            return helper(node1.left, node2.right) && helper(node1.right, node2.left);
+        }
+    }
+
+    /**
+     * 打印二叉树的所有路径
+     * */
+    public static List<String> binaryTreePaths(TreeNode root) {
+        helper(root, "");
+        return list;
+    }
+
+    public static List<String> list = new ArrayList<>();
+
+    public static void helper(TreeNode root, String path) {
+        if(root == null) {
+            return;
+        }
+        if(root.left == null && root.right == null) {
+            list.add(path + root.val);
+        }
+        if(root.left != null) {
+            helper(root.left, path + root.val + "->");
+        }
+        if(root.right != null) {
+            helper(root.right, path + root.val + "->");
+        }
+    }
+
 	public static void main(String[] args) {
 		int[] nums2 = { 5, 1, 2, 3, 8 };
 		int[] tmp = new int[nums2.length];
