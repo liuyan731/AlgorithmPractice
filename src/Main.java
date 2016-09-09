@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 /**
@@ -740,7 +742,164 @@ public class Main {
 			}
 		}
 	}
-
+	
+	/**
+	 * 使用两个队列实现一个栈
+	 * */
+	class StackImplementByTwoQueues {
+		private Queue<Integer> q1;
+		private Queue<Integer> q2;
+		public StackImplementByTwoQueues() {
+			q1 = new LinkedList<>();
+			q2 = new LinkedList<>();
+		}
+		
+		public void push(int x) {	// push操作只在非空队列中进行
+			if(q1.isEmpty() && q2.isEmpty()) {
+				q1.offer(x);
+			} 
+			if(!q1.isEmpty()) {
+				q1.offer(x);
+			}
+			if(!q2.isEmpty()) {
+				q2.offer(x);
+			}
+		}
+		
+		public int pop() throws Exception {
+			if(q1.isEmpty() && q2.isEmpty()) {
+				throw new Exception("stack is empty");
+			} else {
+				if(!q1.isEmpty()) {
+					while(q1.size() > 1) {
+						q2.offer(q1.poll());
+					}
+					return q1.poll();
+				} else if(!q2.isEmpty()) {
+					while(q2.size() > 1) {
+						q1.offer(q2.poll());
+					}
+					return q2.poll();
+				}
+			}
+			return 0;
+		}
+ 	}
+	
+	/**
+	 * 使用两个栈实现一个队列
+	 * */
+	class QueueImplementByTwoStacks {
+		private Stack<Integer> s1;
+		private Stack<Integer> s2;
+		
+		public QueueImplementByTwoStacks() {
+			s1 = new Stack<>();
+			s2 = new Stack<>();
+		}
+		
+		public void push(int x){
+			s1.push(x);
+		}
+		
+		public int pop() throws Exception {
+			if(!s2.isEmpty()) {
+				return s2.pop();
+			} else {
+				while(!s1.isEmpty()) {
+					s2.push(s1.pop());
+				}
+				if(!s2.isEmpty()) {
+					return s2.pop();
+				} else {
+					throw new Exception("queue is empty");
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 二叉树的最大深度
+	 * */
+	public static int maxDepth(TreeNode root) {
+		if(root == null) {
+			return 0;
+		} else {
+			return Math.max(maxDepth(root.left) + 1, maxDepth(root.right) + 1);
+		}
+	}
+	
+	/**
+	 * 二叉树的最小深度
+	 * */
+	public static int minDepth(TreeNode root) {
+		if(root == null) {
+			return 0;
+		} else {
+			if(root.left != null && root.right != null) {
+				return Math.min(minDepth(root.left) + 1, minDepth(root.right) + 1);
+			} else if(root.left == null) {
+				return minDepth(root.right);
+			} else {
+				return minDepth(root.left);
+			}
+		}
+	}
+	
+	/**
+	 * 判断二叉树是否存在一条从根节点到叶子节点的路径来使得节点之和等于给定的值
+	 * */
+	public static boolean hasPath(TreeNode root, int sum) {
+		if(root == null) {
+			return false;
+		} else if(root.left == null && root.right == null && sum == root.val){
+			return true;
+		} else {
+			return hasPath(root.left, sum - root.val) || hasPath(root.right, sum - root.val);
+		}
+	}
+	
+	/**
+	 * 将二叉树的左右子树互换
+	 * */
+	public static TreeNode invertTree(TreeNode root) {
+		if(root == null) {
+			return root;
+		} else {
+			TreeNode l = root.left;
+			TreeNode r = root.right;
+			root.left = invertTree(r);
+			root.right = invertTree(l);
+		}
+		return root;
+	}
+	
+	/**
+	 * 判断一棵二叉树是否平衡(左右子树的深度不超过1)
+	 * */
+	public static boolean isBlanceTree(TreeNode root) {
+		if(root == null) {
+			return true;
+		} else if(Math.abs(maxDepth(root.left) - maxDepth(root.right)) > 1) {
+			return false;
+		} else {
+			return isBlanceTree(root.left) && isBlanceTree(root.right);
+		}
+	}
+	
+	/**
+	 * 判断两个二叉树是否相同
+	 * */
+	public static boolean isSameTree(TreeNode t1, TreeNode t2) {
+		if(t1 == null && t2 == null) {
+			return true;
+		} else if((t1 == null && t2 != null) || (t1 != null && t2 == null) || (t1.val != t2.val)) {
+			return false;
+		} else {
+			return isSameTree(t1.left, t2.left) && isSameTree(t1.right, t2.right);
+		}
+	}
+	
 	public static void main(String[] args) {
 		int[] nums2 = { 5, 1, 2, 3, 8 };
 		int[] tmp = new int[nums2.length];
