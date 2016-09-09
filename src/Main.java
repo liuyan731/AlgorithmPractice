@@ -1,3 +1,5 @@
+import java.util.Stack;
+
 /**
  * Created by liuyan on 16/9/4.
  */
@@ -678,6 +680,64 @@ public class Main {
 		
 		for(int q = 0; q < k; q++) {
 			a[l + q] = tmp[q];
+		}
+	}
+	
+	/**
+	 * 设计含有getMin()方法的栈
+	 * */
+	class GetMinStack {
+		private Stack<Integer> stack;
+		private Stack<Integer> minStack;
+		
+		public GetMinStack() {
+			stack = new Stack<>();
+			minStack = new Stack<>();
+		}
+		
+		public void push(int i) {
+			stack.push(i);
+			if(minStack.isEmpty() || i <= minStack.peek()) {
+				minStack.push(i);
+			}
+		}
+		
+		public boolean pop() {
+			if(stack.isEmpty()) {
+				return false;
+			} else {
+				if(minStack.peek().equals(stack.peek())) {
+					minStack.pop();
+				}
+				stack.pop();
+				return true;
+			}
+		}
+		
+		public int getMin() {
+			if(minStack.isEmpty()) {
+				return -999; // error code
+			} else {
+				return minStack.peek();
+			}
+		}
+	}
+	
+	/**
+	 * 使用一个栈倒序另外一个栈中的数
+	 * */
+	public void reverse(Stack<Integer> stack) {
+		Stack<Integer> tmp = new Stack<>();
+		int size = stack.size();
+		for (int i = 0; i < size; i++) {
+			int top = stack.pop();
+			while (stack.size() > i) {
+				tmp.push(stack.pop());
+			}
+			stack.push(top);
+			while (!tmp.isEmpty()) {
+				stack.push(tmp.pop());
+			}
 		}
 	}
 
