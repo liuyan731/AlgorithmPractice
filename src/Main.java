@@ -941,8 +941,41 @@ public class Main {
     }
 
     /**
-     *
+     * 按层次打印二叉树
      * */
+    public List<List<Integer>> levelOrder(TreeNode root) {
+    	Queue<TreeNode> queue = new LinkedList<>();
+    	List<List<Integer>> ret = new ArrayList<>();
+    	if(root == null) {
+    		return ret;
+    	} else {
+    		queue.offer(root);
+    		while(!queue.isEmpty()) {
+    			List<Integer> list = new ArrayList<>();
+    			int size = queue.size();
+    			for (int i = 0; i < size; i++) {
+					TreeNode node = queue.poll();
+					if(node.left != null) {
+						queue.offer(node.left);
+					}
+					if(node.right != null) {
+						queue.offer(node.right);
+					}
+					list.add(node.val);
+				}
+    			ret.add(list);
+    		}
+    	}
+    	return ret;
+    }
+    
+    /**
+     * 判断二叉树是否为完全二叉树
+     * */
+    public boolean isCompleteTree(TreeNode root) {
+    	
+    	return false;
+    }
 
 	public static void main(String[] args) {
 		int[] nums2 = { 5, 1, 2, 3, 8 };
