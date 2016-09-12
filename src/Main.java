@@ -973,17 +973,215 @@ public class Main {
      * 判断二叉树是否为完全二叉树
      * */
     public boolean isCompleteTree(TreeNode root) {
-    	
-    	return false;
+    	Queue<TreeNode> queue = new LinkedList<>();
+		queue.offer(root);
+		TreeNode node;
+		while((node = queue.poll()) != null) {
+			queue.offer(node.left);
+			queue.offer(node.right);
+		}
+		while(!queue.isEmpty()) {
+			if(queue.poll() != null) {
+				return false;
+			}
+		}
+    	return true;
     }
 
-	public static void main(String[] args) {
-		int[] nums2 = { 5, 1, 2, 3, 8 };
-		int[] tmp = new int[nums2.length];
-		mergeSort(nums2, 0, nums2.length - 1, tmp);
-		for (int i : nums2) {
-			System.out.println(i);
+    /**
+	 * 在二叉查找树中寻找两个节点相同的祖先节点（lowest common ancestor LCA）
+	 * 二叉查找树：任意左子树值 < 根节点值 < 右子树值
+	 * */
+    public static TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+		while((root.val - p.val) * (root.val - q.val) > 0) {
+			root = p.val < root.val ? root.left : root.right;
 		}
+    	return root;
+	}
+
+	/**
+	 * 前缀树
+	 * */
+	class TriesTree {
+		class Node {
+			protected boolean isEnd;
+			protected Map<Character, Node> children;
+			protected int count;
+			public Node() {
+				isEnd = false;
+				children = new HashMap<>();
+				count = 0;
+			}
+		}
+
+		private Node root;
+
+		public TriesTree() {
+			root = new Node();
+		}
+
+		public void insert(String str) {
+			Node node = root;
+			for (int i = 0; i < str.length(); i++) {
+				if(!node.children.containsKey(str.charAt(i))) {
+					node.children.put(str.charAt(i), new Node());
+				}
+				node = node.children.get(str.charAt(i));
+			}
+			node.isEnd = true;
+			node.count++;
+		}
+
+		public boolean find(String word) {
+			Node node = root;
+			for (int i = 0; i < word.length(); i++) {
+				if(!node.children.containsKey(word.charAt(i))) {
+					return false;
+				}
+				node = node.children.get(word.charAt(i));
+			}
+			return node.isEnd;
+		}
+	}
+
+	/**
+	 * 二叉树的前序遍历，递归、非递归
+	 * */
+	public List<Integer> preorderTraversal1(TreeNode root) {
+		List<Integer> ret = new ArrayList<>();
+		if(root == null) {
+			return ret;
+		} else {
+			ret.add(root.val);
+			ret.addAll(preorderTraversal1(root.left));
+			ret.addAll(preorderTraversal1(root.right));
+		}
+		return ret;
+	}
+
+	public List<Integer> preorderTraversal2(TreeNode root) {
+		List<Integer> ret = new ArrayList<>();
+		Stack<TreeNode> stack = new Stack<>();
+		stack.push(root);
+		while(!stack.isEmpty()) {
+			TreeNode node = stack.pop();
+			if(node != null) {
+				ret.add(node.val);
+				stack.push(root.right);
+				stack.push(root.left);
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * 二叉树的中序遍历，递归、非递归
+	 * */
+	public List<Integer> inorderTraversal1(TreeNode root) {
+		List<Integer> ret = new ArrayList<>();
+		if(root == null) {
+			return ret;
+		} else {
+			ret.addAll(preorderTraversal1(root.left));
+			ret.add(root.val);
+			ret.addAll(preorderTraversal1(root.right));
+		}
+		return ret;
+	}
+
+	public List<Integer> inorderTraversal2(TreeNode root) {
+		List<Integer> ret = new ArrayList<>();
+		Stack<TreeNode> stack = new Stack<>();
+		TreeNode node = root;
+		while(!stack.isEmpty() || node != null) {
+			while(node != null) {
+				stack.push(node);
+				node = node.left;
+			}
+			node = stack.pop();
+			ret.add(node.val);
+			node = node.right;
+		}
+		return ret;
+	}
+
+	/**
+	 * 二叉树的后序遍历，递归、非递归
+	 * */
+	public List<Integer> postorderTraversal1(TreeNode root) {
+		List<Integer> ret = new ArrayList<>();
+		if(root == null) {
+			return ret;
+		} else {
+			ret.addAll(preorderTraversal1(root.left));
+			ret.addAll(preorderTraversal1(root.right));
+			ret.add(root.val);
+		}
+		return ret;
+	}
+
+	public List<Integer> postorderTraversal2(TreeNode root) {
+		List<Integer> ret = new ArrayList<>();
+		Stack<TreeNode> stack = new Stack<>();
+		TreeNode node = root;
+		while(!stack.isEmpty() || node != null) {
+			if(node != null) {
+				stack.push(node);
+				ret.add(0, node.val);
+				node = node.right;
+			} else {
+				TreeNode tmp = stack.pop();
+				node = tmp.left;
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * 求一个数的质因子分解，90 ＝ 2 ＊ 3 ＊ 3 ＊ 5
+	 * */
+	public static List<Integer> getPrimeFactors(int num) {
+		List<Integer> ret = new ArrayList<>();
+		for (int i = 2; i <= Math.sqrt(num); i++) {
+			if(num % i == 0) {
+				ret.add(i);
+				num /= i;
+				i = 1;
+			}
+		}
+		ret.add(num);
+		return ret;
+	}
+
+	/**
+	 * 求一个字符串中第一个只出现一次的字符
+	 * */
+	public static char getFirstNoRepeatChar(String str) {
+		char[] cs = str.toCharArray();
+		Map<Character, Integer> map = new HashMap<>();
+		for (char c : cs) {
+			map.put(c, map.containsKey(c) ? (map.get(c) + 1) : 1);
+		}
+		for (Map.Entry<Character, Integer> e : map.entrySet()) {
+			if(e.getValue() == 1) {
+				return e.getKey();
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 *
+	 * */
+
+	public static void main(String[] args) {
+//		int[] nums2 = { 5, 1, 2, 3, 8 };
+//		int[] tmp = new int[nums2.length];
+//		mergeSort(nums2, 0, nums2.length - 1, tmp);
+//		for (int i : nums2) {
+//			System.out.println(i);
+//		}
+		System.out.println(getPrimeFactors(90));
 	}
 
 }
