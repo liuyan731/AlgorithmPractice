@@ -1171,9 +1171,181 @@ public class Main {
 	}
 
 	/**
-	 *
+	 * 高效求数值的整数次方
 	 * */
+	public static int powN(int num, int n) {
+		if(n == 0) {
+			return 1;
+		} else if(n == 1) {
+			return num;
+		} else {
+			int tmp = powN(num, n / 2);
+			if(n % 2 == 0) {
+				return tmp * tmp;
+			} else {
+				return tmp * tmp * num;
+			}
+		}
+	}
+	
+	/**
+	 * 判断一个数是否为2的整数次幂
+	 * */
+	public static boolean is2Pow(int n) {
+		return (n & (n - 1)) == 0 ? true : false; 
+	}
+	
+	/**
+	 * 判断一个数是否为丑数(只包含因子2,3,5的数)
+	 * */
+	public static boolean idUglyNum(int num) {
+		while(num % 2 == 0) {
+			num /= 2;
+		}
+		while(num % 3 == 0) {
+			num /= 3;
+		}
+		while(num % 5 == 0) {
+			num /= 5;
+		}
+		return num == 1 ? true : false;
+	}
+	
+	/**
+	 * 菲波那切、上台阶....
+	 * 递归：效率低下，非递归：效率高
+	 * */
+	public static int fib1(int n) {
+		if(n == 0 || n == 1) {
+			return n;
+		} else {
+			return fib1(n - 1) + fib1(n - 2);
+		}
+	}
+	
+	public static int fib2(int n) {
+		int[] ret = new int[n + 1];
+		ret[0] = 0;
+		ret[1] = 1;
+		for (int i = 2; i <= n; i++) {
+			ret[i] = ret[i - 1] + ret[i - 2];
+		}
+		return ret[n];
+	}
+	
+	/**
+	 * 求一个数组的最大连续子数组的最大和
+	 * */
+	public static int findMaxSum(int[] nums) {
+		int[] dp = new int[nums.length];
+		dp[0] = nums[0];
+		for (int i = 1; i < nums.length; i++) {
+			if(dp[i - 1] < 0) {
+				dp[i] = nums[i];
+			} else {
+				dp[i] = dp[i - 1] + nums[i];
+			}
+		}
+		int max = dp[0];
+		for (int i : dp) {
+			if(i > max) {
+				max = i;
+			}
+		}
+		return max;
+	}
 
+	/**
+	 * 进制转换
+	 * 二（八）进制转十进制
+	 * 十进制转二（八）进制
+	 * 十六进制转十进制
+	 * 十进制转十六进制
+	 * */
+	public static int BinaryToDecimal(String str) {
+		char[] cs = str.toCharArray();
+		int ret = 0;
+		for (int i = 0; i < cs.length; i++) {
+			ret += Integer.parseInt(cs[i] + "") * Math.pow(2, str.length() - 1 - i);
+		}
+		return ret;
+	}
+	
+	public static String DecimalToBinary(int num) {
+		StringBuilder sb = new StringBuilder("");
+		while(num > 0) {
+			sb.append(num % 2);
+			num /= 2;
+		}
+		return sb.reverse().toString();
+	}
+	
+	public static int HexToDecimal(String str) {
+		char[] cs = str.toCharArray();
+		int ret = 0;
+		for (int i = 0; i < cs.length; i++) {
+			if(cs[i] >= '0' && cs[i] <= '9') {
+				ret += (int)((cs[i] - '0') * Math.pow(16, cs.length - 1 - i));
+			} else if(cs[i] >= 'A' && cs[i] <= 'B') {
+				ret += (int)((cs[i] - 'A' + 10) * Math.pow(16, cs.length - 1 - i));
+			}
+		}
+		return ret;
+	}
+	
+	public static String DecimalToHex(int num) {
+		StringBuilder sb = new StringBuilder("");
+		while(num > 0) {
+			if(num % 16 >= 0 && num % 16 <= 9) {
+				sb.append(num % 16);
+			} else if(num % 16 >= 10 && num % 16 <= 15) {
+				sb.append((char)(num % 16 - 10 + 'A'));
+			}
+			num /= 16;
+		}
+		return sb.reverse().toString();
+	}
+	
+	/**
+	 * 一个大小为100的数组，存储1~99的数，其中有两个数是一样的，找出这个数
+	 * 分析：就是1~99的数都有，且其中有一个出现两次
+	 * */
+	public static int findRepeatNum(int[] nums) {
+		int sum1 = 0;
+		int sum2 = 0;
+		for (int i = 0; i < nums.length; i++) {
+			sum1 += i;
+			sum2 += nums[i];
+		}
+		return sum2 - sum1;
+	}
+	
+	/**
+	 * 一个大小为100的数组，存储0~99的数，其中有两个数是一样的，找出这个数
+	 * 分析：存储0~99，说明有一个数缺失，有一个数重复一次
+	 * */
+	public static int findRepeatNum2(int[] nums) {
+		int sum1 = 0;
+		int sum2 = 0;
+		// 假设重复的元素为a， 缺失的元素为b
+		for (int i = 0; i < nums.length; i++) {
+			sum1 += nums[i] - i; //a - b
+			sum2 += nums[i] * nums[i] - i * i; //a*a - b*b
+		}
+		return ((sum2 / sum1) + sum1) / 2;
+	}
+	
+	/**
+	 * 一个数组中除了某一个元素之外，其它的元素都重复了一次，求这个没有重复的元素
+	 * */
+	public static int findNotRepeatOne(int[] nums) {
+		int ret = 0;
+		for (int i = 0; i < nums.length; i++) {
+			ret ^= nums[i];
+		}
+		return ret;
+	}
+	
 	public static void main(String[] args) {
 //		int[] nums2 = { 5, 1, 2, 3, 8 };
 //		int[] tmp = new int[nums2.length];
@@ -1181,7 +1353,12 @@ public class Main {
 //		for (int i : nums2) {
 //			System.out.println(i);
 //		}
-		System.out.println(getPrimeFactors(90));
+//		System.out.println(fib1(10000));
+		System.out.println(BinaryToDecimal("10101"));
+		System.out.println(DecimalToBinary(21));
+		
+		System.out.println(HexToDecimal("1A"));
+		System.out.println(DecimalToHex(26));
 	}
 
 }
